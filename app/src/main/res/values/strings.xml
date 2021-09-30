@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Homework1</string>
+    <string name="contacts">Контакты</string>
+    <string name="load_contacts">Загрузить контакты</string>
+</resources>
