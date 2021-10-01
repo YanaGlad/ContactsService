@@ -1,21 +1,17 @@
 package com.example.broadcastapp
 
 
-import android.Manifest
 import android.content.*
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.IBinder
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 
 class SecondActivity : AppCompatActivity() {
     private var binded = false
     private var contactsService: ContactsService? = null
-    private val REQUEST_CODE = 1
+
 
     var connection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -32,11 +28,14 @@ class SecondActivity : AppCompatActivity() {
 
     private val contactsReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
+            val noPerm = intent.getBooleanExtra(NO_PERMISSION, false)
             val message = intent.getStringArrayListExtra(CONTACT_NAME)
-
             val data = Intent()
             data.putStringArrayListExtra(CONTACT_NAME, message)
-            setResult(RESULT_OK, data)
+            if (noPerm)
+                setResult(RESULT_CANCELED, data)
+            else
+                setResult(RESULT_OK, data)
             finish()
         }
     }
@@ -45,19 +44,6 @@ class SecondActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
-
-        val hasReadContactPermission =
-            ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
-
-        if (hasReadContactPermission == PackageManager.PERMISSION_GRANTED) {
-            READ_CONTACTS_GRANTED = true
-        } else {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.READ_CONTACTS),
-                REQUEST_CODE
-            )
-        }
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
             contactsReceiver,

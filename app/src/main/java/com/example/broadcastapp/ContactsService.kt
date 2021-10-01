@@ -12,6 +12,7 @@ import android.os.Binder
 import android.os.Bundle
 import android.os.IBinder
 import android.provider.ContactsContract
+import android.widget.Toast
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import java.io.ByteArrayInputStream
 import java.util.*
@@ -28,6 +29,12 @@ class ContactsService : Service() {
     override fun onBind(intent: Intent?): IBinder {
         if (READ_CONTACTS_GRANTED)
             loadContacts()
+        else {
+            val intent = Intent(CUSTOM_FILTER_CONTACT)
+            intent.putExtra(NO_PERMISSION, true)
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+        }
+
         return binder
     }
 
@@ -38,6 +45,7 @@ class ContactsService : Service() {
     override fun onUnbind(intent: Intent?): Boolean {
         return true
     }
+
 
     @SuppressLint("Range")
     fun loadContacts(): ArrayList<ContactModel>{
