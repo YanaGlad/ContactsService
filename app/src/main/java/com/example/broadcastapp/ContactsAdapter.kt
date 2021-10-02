@@ -51,7 +51,7 @@ class ContactsAdapter : ListAdapter<ContactModel, ContactsAdapter.ViewHolder>(Di
 
     class ViewHolder(private val binding: ContactsItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        val context = binding.root.context
+        val context = binding.root.context!!
 
         fun bind(model: ContactModel) {
             binding.name.text = model.name

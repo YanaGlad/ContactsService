@@ -12,11 +12,9 @@ import android.os.Binder
 import android.os.Bundle
 import android.os.IBinder
 import android.provider.ContactsContract
-import android.widget.Toast
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import java.io.ByteArrayInputStream
 import java.util.*
-
 
 class ContactsService : Service() {
     private val binder: IBinder = LocalContactsBinder()
@@ -30,11 +28,10 @@ class ContactsService : Service() {
         if (READ_CONTACTS_GRANTED)
             loadContacts()
         else {
-            val intent = Intent(CUSTOM_FILTER_CONTACT)
-            intent.putExtra(NO_PERMISSION, true)
-            LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+            val broadIntent = Intent(CUSTOM_FILTER_CONTACT)
+            broadIntent.putExtra(NO_PERMISSION, true)
+            LocalBroadcastManager.getInstance(this).sendBroadcast(broadIntent)
         }
-
         return binder
     }
 
@@ -82,15 +79,13 @@ class ContactsService : Service() {
                 )
 
                 var photo : Bitmap?=null
-                try {
-                    if (photoCursor?.moveToFirst() == true) {
-                        val data = photoCursor.getBlob(0)
+                photoCursor.use { cur ->
+                    if (cur?.moveToFirst() == true) {
+                        val data = cur.getBlob(0)
                         if (data != null) {
                             photo =  BitmapFactory.decodeStream(ByteArrayInputStream(data))
                         }
                     }
-                } finally {
-                    photoCursor?.close()
                 }
 
                 contacts.add(ContactModel(name, photo))

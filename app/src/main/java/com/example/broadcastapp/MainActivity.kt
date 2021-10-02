@@ -7,7 +7,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
@@ -19,7 +18,6 @@ import com.google.android.material.snackbar.Snackbar
 
 
 class MainActivity : AppCompatActivity() {
-
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: ContactsAdapter
@@ -47,10 +45,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun makeSnackBar(layout : Int, message: String) {
+    private fun makeSnackBar(snackBackLayout : Int, message: String) {
         Snackbar.make(binding.main, message, Snackbar.LENGTH_LONG).show()
         val snackBar = Snackbar.make(binding.root, "", Snackbar.LENGTH_LONG)
-        val customSnackView: View = layoutInflater.inflate(layout, null)
+        val customSnackView: View = layoutInflater.inflate(snackBackLayout, null)
         snackBar.view.setBackgroundColor(Color.TRANSPARENT)
 
         val snackBarLayout = snackBar.view as Snackbar.SnackbarLayout
@@ -71,11 +69,9 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnLaunch.setOnClickListener {
             val intent = Intent(this, SecondActivity::class.java)
-            startForResult.launch(intent);
+            startForResult.launch(intent)
         }
-
         initRecycler()
-
     }
 
     private fun initRecycler() {
@@ -85,7 +81,7 @@ class MainActivity : AppCompatActivity() {
         binding.contactList.adapter = adapter
     }
 
-    fun loadContacts(list: List<ContactModel>) {
+    private fun loadContacts(list: List<ContactModel>) {
         adapter.submitList(list)
         binding.btnLaunch.isEnabled = false
     }
