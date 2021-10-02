@@ -9,26 +9,26 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 
 class SecondActivity : AppCompatActivity() {
-    private var binded = false
+    private var bound = false
     private var contactsService: ContactsService? = null
 
     private var connection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             val binder = service as ContactsService.LocalContactsBinder
             contactsService = binder.service
-            binded = true
+            bound = true
         }
         override fun onServiceDisconnected(name: ComponentName) {
-            binded = false
+            bound = false
         }
     }
 
     private val contactsReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
-            val noPerm = intent.getBooleanExtra(NO_PERMISSION, false)
-            val message = intent.getStringArrayListExtra(CONTACT_NAME)
+            val noPerm = intent.getBooleanExtra(NO_PERMISSION_EXTRA, false)
+            val message = intent.getStringArrayListExtra(CONTACT_NAME_EXTRA)
             val data = Intent()
-            data.putStringArrayListExtra(CONTACT_NAME, message)
+            data.putStringArrayListExtra(CONTACT_NAME_EXTRA, message)
             if (noPerm)
                 setResult(RESULT_CANCELED, data)
             else
@@ -43,7 +43,7 @@ class SecondActivity : AppCompatActivity() {
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
             contactsReceiver,
-            IntentFilter(CUSTOM_FILTER_CONTACT)
+            IntentFilter(CUSTOM_FILTER_CONTACT_INTENT)
         )
     }
 
@@ -55,9 +55,9 @@ class SecondActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        if (binded) {
+        if (bound) {
             unbindService(connection)
-            binded = false
+            bound = false
         }
     }
 

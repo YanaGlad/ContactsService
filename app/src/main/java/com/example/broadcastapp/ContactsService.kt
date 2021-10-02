@@ -25,19 +25,16 @@ class ContactsService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder {
-        if (READ_CONTACTS_GRANTED)
+        if(checkReadContactsPermission(this))
             loadContacts()
         else {
-            val broadIntent = Intent(CUSTOM_FILTER_CONTACT)
-            broadIntent.putExtra(NO_PERMISSION, true)
+            val broadIntent = Intent(CUSTOM_FILTER_CONTACT_INTENT)
+            broadIntent.putExtra(NO_PERMISSION_EXTRA, true)
             LocalBroadcastManager.getInstance(this).sendBroadcast(broadIntent)
         }
         return binder
     }
 
-    override fun onRebind(intent: Intent?) {
-        super.onRebind(intent)
-    }
 
     override fun onUnbind(intent: Intent?): Boolean {
         return true
@@ -46,7 +43,7 @@ class ContactsService : Service() {
 
     @SuppressLint("Range")
     fun loadContacts(): ArrayList<ContactModel>{
-        val intent = Intent(CUSTOM_FILTER_CONTACT)
+        val intent = Intent(CUSTOM_FILTER_CONTACT_INTENT)
 
         val contentResolver = contentResolver
         val cursor: Cursor? =
@@ -93,7 +90,7 @@ class ContactsService : Service() {
             cursor.close()
         }
         Bundle()
-        intent.putParcelableArrayListExtra(CONTACT_NAME, contacts)
+        intent.putParcelableArrayListExtra(CONTACT_NAME_EXTRA, contacts)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
 
         return contacts

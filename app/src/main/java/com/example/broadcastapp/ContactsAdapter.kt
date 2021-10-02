@@ -1,5 +1,6 @@
 package com.example.broadcastapp
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
@@ -51,7 +52,7 @@ class ContactsAdapter : ListAdapter<ContactModel, ContactsAdapter.ViewHolder>(Di
 
     class ViewHolder(private val binding: ContactsItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        val context = binding.root.context!!
+        val context : Context = binding.root.context
 
         fun bind(model: ContactModel) {
             binding.name.text = model.name

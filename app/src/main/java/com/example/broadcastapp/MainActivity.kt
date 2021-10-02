@@ -11,8 +11,6 @@ import android.widget.FrameLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.broadcastapp.databinding.ActivityMainBinding
 import com.google.android.material.snackbar.Snackbar
 
@@ -21,28 +19,33 @@ class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: ContactsAdapter
-    private val REQUEST_CODE = 1
 
     private val activityResultLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if (isGranted) {
-                READ_CONTACTS_GRANTED = true
-            } else {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.READ_CONTACTS),
-                    REQUEST_CODE
-                )
-            }
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            val intent = Intent(this, SecondActivity::class.java)
+            startForResult.launch(intent)
         }
 
     private var startForResult = registerForActivityResult(StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            val list = result.data?.extras?.getParcelableArrayList<ContactModel>(CONTACT_NAME)
+            val list = result.data?.extras?.getParcelableArrayList<ContactModel>(CONTACT_NAME_EXTRA)
             list?.let { loadContacts(it) }
         } else {
             makeSnackBar(R.layout.no_permission_snackbar, getString(R.string.no_permission))
         }
+    }
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        _binding = ActivityMainBinding.inflate(layoutInflater)
+        super.onCreate(savedInstanceState)
+        setContentView(binding.root)
+
+        binding.btnLaunch.setOnClickListener {
+            activityResultLauncher.launch(Manifest.permission.READ_CONTACTS)
+        }
+
+        initRecycler()
     }
 
     private fun makeSnackBar(snackBackLayout : Int, message: String) {
@@ -61,22 +64,8 @@ class MainActivity : AppCompatActivity() {
         snackBar.show()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        _binding = ActivityMainBinding.inflate(layoutInflater)
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-        activityResultLauncher.launch(Manifest.permission.READ_CONTACTS)
-
-        binding.btnLaunch.setOnClickListener {
-            val intent = Intent(this, SecondActivity::class.java)
-            startForResult.launch(intent)
-        }
-        initRecycler()
-    }
 
     private fun initRecycler() {
-        binding.contactList.layoutManager = LinearLayoutManager(this)
-        binding.contactList.setHasFixedSize(false)
         adapter = ContactsAdapter()
         binding.contactList.adapter = adapter
     }
