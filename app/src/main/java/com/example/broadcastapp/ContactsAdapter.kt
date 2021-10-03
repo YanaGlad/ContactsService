@@ -52,12 +52,14 @@ class ContactsAdapter : ListAdapter<ContactModel, ContactsAdapter.ViewHolder>(Di
 
     class ViewHolder(private val binding: ContactsItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        val context : Context = binding.root.context
+        val context: Context = binding.root.context
 
         fun bind(model: ContactModel) {
-            binding.name.text = model.name
-            if (model.photo != null)
-                binding.icon.setImageBitmap(model.photo)
+            binding.apply {
+                name.text = model.name
+                if (model.photo != null)
+                    icon.setImageBitmap(model.photo)
+            }
         }
     }
 }

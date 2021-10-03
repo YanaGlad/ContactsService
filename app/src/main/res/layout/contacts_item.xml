@@ -9,12 +9,12 @@
         android:id="@+id/icon"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_margin="8dp"
         android:layout_marginStart="8dp"
+        android:src="@drawable/ic_image"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/name"
         app:layout_constraintStart_toStartOf="parent"
-        android:src="@drawable/ic_image"
-        android:layout_margin="8dp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView

@@ -27,8 +27,7 @@ class SecondActivity : AppCompatActivity() {
         override fun onReceive(context: Context?, intent: Intent) {
             val noPerm = intent.getBooleanExtra(NO_PERMISSION_EXTRA, false)
             val message = intent.getStringArrayListExtra(CONTACT_NAME_EXTRA)
-            val data = Intent()
-            data.putStringArrayListExtra(CONTACT_NAME_EXTRA, message)
+            val data = Intent().putStringArrayListExtra(CONTACT_NAME_EXTRA, message)
             if (noPerm)
                 setResult(RESULT_CANCELED, data)
             else
